@@ -22,7 +22,7 @@ def main():
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
-    Shot.containers = (updatable, drawable)
+    Shot.containers = (shots, updatable, drawable)
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     asteroidfield = AsteroidField()
     
@@ -33,15 +33,31 @@ def main():
         screen.fill("black")
 
         updatable.update(dt)
+
         for game_object in drawable:
             game_object.draw(screen)
+            
         # If any asteroid collides with player => game over!
         for asteroid in asteroids:
+            # Check if asteroid collides with player
             if asteroid.collision(player):
                 print("Game Over!")
                 sys.exit()
 
+            # How to check if asteroid collides with another asteroid
+           # others = [other for other in asteroids if other != asteroid]
+           # for other in others:
+           #     if asteroid.collision(other):
+           #         asteroid.stick(other)
+
+            # Check if shots land on asteroid
+            for shot in shots:
+                if asteroid.collision(shot):
+                    shot.kill()
+                    asteroid.split()
+
         pygame.display.flip()
+        # Limit framerate to 60 FPS
         dt = clock.tick(60) / 1000 
 
 
